@@ -30,7 +30,8 @@ while run == True:
         try:
             input = int(input)
             ans = int(np.polyval(eq, input))
-            ft = ans/12
-            print str(int(ft)) + ' ft. and ' + str(ans % 12) + " ins."
+            #ft = ans/12
+            #print str(int(ft)) + ' ft. and ' + str(ans % 12) + " ins."
+            print ans
         except:
             print "Invalid angle"
