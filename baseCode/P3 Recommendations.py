@@ -8,22 +8,24 @@ import numpy as np
 def findSimilar(iLike, userLikes):
     # Create an And similarity
     similarityAnd = iLike * userLikes
-    # Create a per user sum
-    similaritySum = np.sum(userLikes, 1)
+    # Create a per user and sum
+    similarityAndSum = np.sum(similarityAnd, 1)
     # Create an Or similarity
     userSimilarityOr = iLike + userLikes
     
     # Calculate the similarity
-    userSimilarity = similarityAnd / userSimilarityOr
+    userSimilarity = similarityAndSum / (np.sum(userSimilarityOr, 1) - similarityAndSum)
     
     # Make the most similar user has a new like that the previous user did not have
     # I used a while loop.
     # You can "get rid" of a user that is most similar, but doesn't have any new likes
     # by setting the userSimilarity for them to 0
     # When you get the index, save it in the variable maxIndex
+    #found = False
+    #while found != True:
     maxIndex = np.argmax(userSimilarity)
     # Print the max similarity number (most times this is something like 0.17
-    
+    print(np.max(userSimilarity))
     # Return the index of the user which is the best match
     return maxIndex
     
@@ -50,15 +52,17 @@ def processLikes(iLike):
 
 
     # Find the most similar user
-    user = findSimilar(iLike, userLikes)
+    user = findSimilar(iLikeNp, userLikes)
     print("\nYou might like: ")
     # Find the indexes of the values that are ones
     # https://stackoverflow.com/a/17568803/3854385 (Note: You don't want it to be a list, but you do want to flatten it.)
-    recLikes = np.argwhere(user = np.amax(user))
+    recLikes = np.sum(np.argwhere(userLikes[user] == np.amax(userLikes[user])), 1)
 
     # For each item the similar user likes that the person didn't already say they liked
     # print the movie name using printMovie (you'll also need a for loop and an if statement)
-
+    for i in recLikes:
+        if iLikeNp[i] != 1:
+            printMovie(i)
 ########################################################
 # Begin Phase 1
 ########################################################
@@ -207,9 +211,13 @@ while running == True:
             if id == 'done':
                 run = False
             else:
-                int(id)
                 try:
-                    iLike.append(id)
+                    id = int(id)
+                    if id > 1683:
+                        print("Invalid Movie ID")
+                        continue
+                    if id not in iLike:
+                        iLike.append(id)
                 except ValueError:
                     print("Invalid Movie ID")
         processLikes(iLike)
